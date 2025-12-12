@@ -1,0 +1,7 @@
+portfolio/
+  projects/
+    aws-ec2-nginx.md
+    aws-ssh-hardening.md
+    cisco-pt-home-network.md
+  resume/
+    resume-draft.md

@@ -1,0 +1,82 @@
+# Project Name (short + clear)
+AWS EC2 Web Server with Nginx and Firewall Hardening
+
+## When
+[Month Year] – [Month Year] or “Ongoing”
+
+## Goal
+Short sentence: what were you trying to accomplish?
+
+Example:
+Deploy a secure, publicly accessible web server on AWS using an Ubuntu EC2 instance, Nginx, and a locked-down firewall.
+
+## Tech Used
+- AWS EC2 (Ubuntu)
+- Nginx
+- UFW firewall
+- SSH (key-based auth)
+- Linux (CLI)
+
+## What I Did (bullet points, detailed)
+- Launched an Ubuntu EC2 instance in AWS and configured security groups for SSH and HTTP.
+- Installed and configured Nginx as a web server, verified it was reachable from the internet.
+- Configured `ufw` to allow only SSH and HTTP/HTTPS traffic, blocking all other inbound ports.
+- Set up SSH key-based authentication, disabled password logins, and tested access from my main machine.
+- Reboot-tested the instance to make sure firewall, Nginx, and SSH settings persisted across restarts.
+
+## Problems I Solved / Lessons Learned
+- Example: Nginx not loading due to conflicting firewall rules; fixed by aligning security group + `ufw`.
+- Example: SSH still prompting for password; resolved by updating `sshd_config` and restarting the service.
+- Example: Learned difference between cloud security groups and OS-level firewall.
+
+## Commands / Config Snippets (optional)
+```bash
+sudo apt update && sudo apt install nginx
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+...
+
+Do the same for a **Cisco Packet Tracer** project:
+
+- “Small Office Network with VLANs and Inter-VLAN Routing”
+- “Home Network Simulation with Wireless + DHCP + Default Gateway”
+- Spell out: devices, addressing, VLANs, routing, troubleshooting.
+
+This is the tedious part, but once it’s written, you never lose those details again.
+
+---
+
+## 2️⃣ Turn those projects into strong **resume bullets**
+
+From each project file, you’ll pull **2–3 bullets** max that sound like job experience.
+
+Example from your AWS EC2 project:
+
+> - Deployed an Ubuntu-based EC2 instance on AWS and configured Nginx to host a public-facing web server.  
+> - Hardened remote access by enforcing SSH key-based authentication, disabling password login, and restricting inbound traffic via AWS security groups and `ufw` firewall rules.  
+> - Troubleshot and resolved connectivity issues caused by conflicting firewall and security group settings, ensuring consistent access after system reboots.
+
+Example from a Cisco PT project:
+
+> - Designed and implemented a simulated small office network in Cisco Packet Tracer with VLANs, DHCP, and inter-VLAN routing.  
+> - Configured switchports, default gateways, and routing to allow devices on different VLANs to communicate securely.  
+> - Tested connectivity and troubleshooting tools (ping, traceroute, IP addressing) to validate network design.
+
+We’ll plug these into your resume in a projects section and/or under “Relevant Experience.”
+
+---
+
+## 3️⃣ Build a **simple online resume site** on your EC2
+
+You already have:
+- Ubuntu EC2  
+- Nginx  
+So you’re 80% there.
+
+### Step 1: Find your web root
+
+On Ubuntu with Nginx default config, it’s usually:
+
+```bash
+cd /var/www/html
+ls

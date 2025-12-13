@@ -19,6 +19,13 @@ Client
       → EC2 Instance (Public)
           → NGINX (Reverse Proxy, Port 80)
               → FastAPI Application (Docker, localhost:8000)
+
+- Public traffic terminates at NGINX over HTTPS
+- NGINX acts as a reverse proxy
+- FastAPI runs in Docker and is not publicly exposed
+- Only ports 80/443 are open externally
+- Application health is exposed via `/api/status`
+
 ```
 
 

@@ -12,6 +12,7 @@ Deploy a secure EC2-hosted web application that mirrors real-world production ar
 
 ## Architecture
 
+The following diagram shows the request flow from the client to the application:
 ```text
 Client
   → Custom Domain (DNS)

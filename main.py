@@ -20,6 +20,8 @@ def status():
         "utc": datetime.now(timezone.utc).isoformat(),
         "version": os.getenv("APP_VERSION", "v1"),
     }
+    
+BOOT_TIME = psutil.boot_time()
 
 @app.get("/api/system")
 def system():

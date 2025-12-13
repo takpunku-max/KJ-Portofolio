@@ -4,8 +4,12 @@ import os
 import socket
 import psutil
 import time
+from openai import OpenAI
 
 app = FastAPI()
+BOOT_TIME = psutil.boot_time()
+client = OpentAI(api_key=os.getenv("OPEN_API_KEY"))
+
 
 @app.get("/")
 def root():
@@ -21,7 +25,6 @@ def status():
         "version": os.getenv("APP_VERSION", "v1"),
     }
 
-BOOT_TIME = psutil.boot_time()
 
 @app.get("/api/system")
 def system():
@@ -93,3 +96,24 @@ def health():
         "reasons": reasons,
         "utc": datetime.now(timezone.utc).isoformat(),
     }
+
+
+    @app.get("/api/health/summary")
+    def health_summary():
+        health = health()
+
+        prompt = format_health_for_ai(health)
+
+        response = client.chat.completions.create(
+            model = "gpt-4o-mini",
+            messages =[
+                {"role": "system", "content": "You are a senior site reliability engineer"}
+                {"role": "user", "content": prompt}
+            ],
+            temperature = 0.2
+        )
+
+        return {
+            "summary": response.choices[0].message.content,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }

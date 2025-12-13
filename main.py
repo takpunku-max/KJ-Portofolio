@@ -1,46 +1,25 @@
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from datetime import datetime, timezone
-import os, json
-import socket
+import os, json, socket, time
 import psutil
-import time
 from openai import OpenAI
 
 app = FastAPI()
 BOOT_TIME = psutil.boot_time()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def get_openai_client():
+def get_openai_client() -> OpenAI:
     key = os.getenv("OPENAI_API_KEY")
     if not key:
-        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not set")
+        # Don't crash the app — only the AI endpoint should fail
+        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not set on server")
     return OpenAI(api_key=key)
 
-
-ddef format_health_for_ai(health_data: dict) -> str:
-    # Keep it simple and deterministic for now
+def format_health_for_ai(health_data: dict) -> str:
     return (
         "Summarize this server health JSON for an operator.\n"
         "Return: 1) overall status, 2) biggest risks, 3) 3 recommended actions.\n\n"
         + json.dumps(health_data, indent=2)
     )
-
-
-@app.get("/")
-def root():
-    return {"status": "ok", "message": "Hello from FastAPI in Docker on EC2"}
-
-@app.get("/api/status")
-def status():
-    return {
-        "status": "ok",
-        "service": "fastapi",
-        "host": socket.gethostname(),
-        "utc": datetime.now(timezone.utc).isoformat(),
-        "version": os.getenv("APP_VERSION", "v1"),
-    }
-
 
 @app.get("/api/system")
 def system():
@@ -116,25 +95,25 @@ def health():
 
 @app.get("/api/health/summary")
 def health_summary():
-    # 1) Get your local health object (your existing function)
     health_data = health()
-
-    # 2) Build prompt
     prompt = format_health_for_ai(health_data)
 
-    # 3) Read key safely
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured on server")
+    try:
+        client = get_openai_client()
+    except HTTPException:
+        return {
+            "summary": "AI summary unavailable (OPENAI_API_KEY not set).",
+            "health": health_data,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
 
-    # 4) Call model (Responses API)
-    client = OpenAI(api_key=api_key)
     resp = client.responses.create(
         model="gpt-5-nano",
         input=[
             {"role": "system", "content": "You are a senior site reliability engineer. Be concise and specific."},
             {"role": "user", "content": prompt},
-        ]
+        ],
+        temperature=0.2,
     )
 
     return {

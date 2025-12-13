@@ -105,22 +105,22 @@ def health():
     }
 
 
-    @app.get("/api/health/summary")
-    def health_summary():
-        health = health()
+@app.get("/api/health/summary")
+def health_summary():
+    health = health()
 
-        prompt = format_health_for_ai(health)
+    prompt = format_health_for_ai(health)
 
-        response = client.response.create(
-            model = "gpt-5-nano",
-            input =[
-                {"role": "system", "content": "You are a senior site reliability engineer"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature = 0.2
-        )
+    response = client.response.create(
+        model = "gpt-5-nano",
+        input =[
+            {"role": "system", "content": "You are a senior site reliability engineer"},
+            {"role": "user", "content": prompt}
+        ],
+        temperature = 0.2
+    )
 
-        return {
-            "summary": response.output_text,
-            "generated_at": datetime.now(timezone.utc).isoformat()
-        }
+    return {
+        "summary": response.output_text,
+        "generated_at": datetime.now(timezone.utc).isoformat()
+    }

@@ -41,6 +41,13 @@ Client
 
 ---
 
+## Backup Strategy
+
+- EC2 root volume snapshot taken after stable deployment
+- Snapshot includes OS, NGINX, Docker containers, and application state
+
+---
+
 ## Technology Stack
 
 - **Cloud Provider:** AWS
@@ -96,6 +103,8 @@ Client
 
 This project implements multiple layers of security to mirror real-world production practices while maintaining developer accessibility.
 
+---
+
 ### Network Security
 - AWS Security Groups restrict inbound traffic to only required ports:
   - **22 (SSH)** – Key-based access only
@@ -103,11 +112,15 @@ This project implements multiple layers of security to mirror real-world product
   - **443 (HTTPS)** – Public web access
 - No other inbound ports are exposed
 
+---
+
 ### SSH Hardening
 - SSH access is restricted to **key-based authentication**
 - Password-based login is disabled
 - Root login is disabled
 - SSH is kept enabled to support VS Code Remote SSH during development
+
+---
 
 ### Fail2ban (Intrusion Prevention)
 - Fail2ban actively monitors SSH authentication logs
@@ -115,11 +128,15 @@ This project implements multiple layers of security to mirror real-world product
 - Provides protection against brute-force and automated scanning attacks
 - Works alongside AWS Security Groups for layered defense
 
+---
+
 ### Web Application Security
 - NGINX acts as a reverse proxy, isolating the FastAPI application from direct internet access
 - The FastAPI application runs privately on localhost within a Docker container
 - Only NGINX is publicly exposed
 - TLS encryption is enforced using Let’s Encrypt certificates
+
+---
 
 ### Defense-in-Depth Approach
 Security is implemented at multiple layers:

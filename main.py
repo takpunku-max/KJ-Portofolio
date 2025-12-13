@@ -107,7 +107,7 @@ def health():
 
 @app.get("/api/health/summary")
 def health_summary():
-    health_data = health()
+    health_data = health()  # <-- renamed
 
     prompt = format_health_for_ai(health_data)
 

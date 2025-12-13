@@ -18,6 +18,15 @@ def get_openai_client():
     return OpenAI(api_key=key)
 
 
+def format_health_for_ai(health: dict) -> str:
+    # Keep it simple and deterministic
+    return (
+        "Summarize this health check for a human operator.\n\n"
+        f"Health JSON:\n{health}\n\n"
+        "Return 3 bullets: status, main risk, and next action."
+    )
+
+
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Hello from FastAPI in Docker on EC2"}

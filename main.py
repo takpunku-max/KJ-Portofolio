@@ -98,25 +98,43 @@ def health_summary():
     health_data = health()
     prompt = format_health_for_ai(health_data)
 
-    try:
-        client = get_openai_client()
-    except HTTPException:
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
         return {
             "summary": "AI summary unavailable (OPENAI_API_KEY not set).",
-            "health": health_data,
+            "fallback": True,
             "generated_at": datetime.now(timezone.utc).isoformat(),
         }
 
-    resp = client.responses.create(
-        model="gpt-5-nano",
-        input=[
-            {"role": "system", "content": "You are a senior site reliability engineer. Be concise and specific."},
-            {"role": "user", "content": prompt},
-        ],
-    )
+    try:
+        client = OpenAI(api_key=api_key)
+        resp = client.responses.create(
+            model="gpt-5-nano",
+            input=[
+                {"role": "system", "content": "You are a senior site reliability engineer. Be concise and specific."},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        return {
+            "summary": resp.output_text,
+            "fallback": False,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
 
-    return {
-        "summary": resp.output_text,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-    }
+    except openai.RateLimitError as e:
+        # includes quota exceeded / insufficient_quota
+        return {
+            "summary": "AI summary unavailable (quota/rate limit).",
+            "fallback": True,
+            "error": str(e),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    except Exception as e:
+        return {
+            "summary": "AI summary unavailable (unexpected error).",
+            "fallback": True,
+            "error": str(e),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
 

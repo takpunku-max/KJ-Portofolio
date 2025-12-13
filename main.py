@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from datetime import datetime, timezone
 import os
 import socket
+import psutil
+import time
 
 app = FastAPI()
 
@@ -21,22 +23,24 @@ def status():
 
 @app.get("/api/system")
 def system():
+    uptime_second = int(time.time() - BOOT_TIME)
+
     return {
         "status": "ok",
         "service": "fastapi",
-        "host": "ip-172-31-xx-xx",
-        "utc": "2025-12-13T18:12:01Z",
-        "app_version": "v1",
+        "host": socket.gethostname(),
+        "utc": datetime.now(timezone.utc).isoformat(),
+        "app_version": os.getenv("APP_VERSION", "v1.3"),
 
         "system": {
-            "uptime_seconds": 123456,
-            "load_1m": 0.12,
-            "mem_used_percent": 41.3,
-            "disk_used_percent": 28.9
+            "uptime_seconds": uptime_seconds,
+            "load_1m": os.getloadavg()[0],
+            "mem_used_percent": psutil.virtual_memory().percent,
+            "disk_used_percent": psutil.disk_usage("/").percent
         },
 
         "runtime": {
-            "container": true,
-            "python": "3.11.6"
+            "container": os.path.exists("/.dockerenv"),
+            "python": os.sys.version.split()[0]
         }
     }

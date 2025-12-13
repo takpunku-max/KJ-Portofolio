@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 from datetime import datetime, timezone
-import os
+import os, json
 import socket
 import psutil
 import time
@@ -18,12 +18,12 @@ def get_openai_client():
     return OpenAI(api_key=key)
 
 
-def format_health_for_ai(health: dict) -> str:
-    # Keep it simple and deterministic
+ddef format_health_for_ai(health_data: dict) -> str:
+    # Keep it simple and deterministic for now
     return (
-        "Summarize this health check for a human operator.\n\n"
-        f"Health JSON:\n{health}\n\n"
-        "Return 3 bullets: status, main risk, and next action."
+        "Summarize this server health JSON for an operator.\n"
+        "Return: 1) overall status, 2) biggest risks, 3) 3 recommended actions.\n\n"
+        + json.dumps(health_data, indent=2)
     )
 
 
@@ -116,22 +116,29 @@ def health():
 
 @app.get("/api/health/summary")
 def health_summary():
-    health_data = health()  # <-- renamed
+    # 1) Get your local health object (your existing function)
+    health_data = health()
 
+    # 2) Build prompt
     prompt = format_health_for_ai(health_data)
 
-    response = client.response.create(
-        model = "gpt-5-nano",
-        input =[
-            {"role": "system", "content": "You are a senior site reliability engineer"},
-            {"role": "user", "content": prompt}
-        ],
-        temperature = 0.2
+    # 3) Read key safely
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured on server")
+
+    # 4) Call model (Responses API)
+    client = OpenAI(api_key=api_key)
+    resp = client.responses.create(
+        model="gpt-5-nano",
+        input=[
+            {"role": "system", "content": "You are a senior site reliability engineer. Be concise and specific."},
+            {"role": "user", "content": prompt},
+        ]
     )
 
     return {
-        "summary": response.output_text,
-        "generated_at": datetime.now(timezone.utc).isoformat()
+        "summary": resp.output_text,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
-    

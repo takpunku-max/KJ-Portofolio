@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from datime import datetime
-import os socket
+import os
+import socket
 
 app = FastAPI()
 

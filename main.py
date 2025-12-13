@@ -113,7 +113,6 @@ def health_summary():
             {"role": "system", "content": "You are a senior site reliability engineer. Be concise and specific."},
             {"role": "user", "content": prompt},
         ],
-        temperature=0.2,
     )
 
     return {

@@ -121,6 +121,6 @@ def health():
         )
 
         return {
-            "summary": summary_text,
+            "summary": response.output_text,
             "generated_at": datetime.now(timezone.utc).isoformat()
         }

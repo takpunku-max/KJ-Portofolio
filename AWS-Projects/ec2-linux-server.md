@@ -91,6 +91,8 @@ Client
 ---
 
 ## Conclusion
-This project provided hands-on experience deploying and securing a web application in a cloud environment. By configuring firewalls, reverse proxies, containerization, and service automation, I learned how to take an application from local development to a stable, secure, and publicly accessible production deployment.
+This project provided hands-on experience deploying and securing a web application in a cloud environment.
+By configuring firewalls, reverse proxies, containerization, and service automation,
+I learned how to take an application from local development to a stable, secure, and publicly accessible production deployment.
 
 

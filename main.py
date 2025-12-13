@@ -107,7 +107,7 @@ def health():
         response = client.chat.completions.create(
             model = "gpt-4o-mini",
             messages =[
-                {"role": "system", "content": "You are a senior site reliability engineer"}
+                {"role": "system", "content": "You are a senior site reliability engineer"},
                 {"role": "user", "content": prompt}
             ],
             temperature = 0.2

@@ -71,6 +71,7 @@ Client
 - Debugged Docker permission issues related to Unix groups
 - Gained a deeper understanding of VM networking versus container networking
 - Developed experience troubleshooting real-world infrastructure issues
+- HTTPS enabled using Let’s Encrypt with automatic certificate renewal via Certbot
 
 ---
 

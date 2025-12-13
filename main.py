@@ -8,7 +8,7 @@ from openai import OpenAI
 
 app = FastAPI()
 BOOT_TIME = psutil.boot_time()
-client = OpentAI(api_key=os.getenv("OPEN_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPEN_API_KEY"))
 
 
 @app.get("/")

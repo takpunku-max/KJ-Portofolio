@@ -23,7 +23,7 @@ def status():
 
 @app.get("/api/system")
 def system():
-    uptime_second = int(time.time() - BOOT_TIME)
+    uptime_seconds = int(time.time() - BOOT_TIME)
 
     return {
         "status": "ok",

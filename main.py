@@ -104,9 +104,9 @@ def health():
 
         prompt = format_health_for_ai(health)
 
-        response = client.chat.completions.create(
-            model = "gpt-4o-mini",
-            messages =[
+        response = client.response.create(
+            model = "gpt-5-nano",
+            input =[
                 {"role": "system", "content": "You are a senior site reliability engineer"},
                 {"role": "user", "content": prompt}
             ],
@@ -114,6 +114,6 @@ def health():
         )
 
         return {
-            "summary": response.choices[0].message.content,
+            "summary": summary_text,
             "generated_at": datetime.now(timezone.utc).isoformat()
         }

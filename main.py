@@ -64,8 +64,8 @@ def health():
         score -= 20
         reasons.append(f"High load (1m): {load_1m:.2f}")
 
-    if mem > 80:
-        score -= 25
+    if mem > 90:
+        score -= 20
         reasons.append(f"High memory usage: {mem:.1f}%")
 
     if disk > 85:
@@ -73,9 +73,9 @@ def health():
         reasons.append(f"High disk usage: {disk:.1f}%")
 
     # Determine status from worst condition / score
-    if disk > 92 or mem > 92 or load_1m > 4.0 or score <= 50:
+    if disk > 92 or mem > 95 or load_1m > 4.0 or score <= 50:
         status = "critical"
-    elif disk > 85 or mem > 80 or load_1m > 2.0 or score <= 80:
+    elif disk > 85 or mem > 90 or load_1m > 2.0 or score <= 80:
         status = "warning"
 
     if not reasons:

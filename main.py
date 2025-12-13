@@ -107,9 +107,9 @@ def health():
 
 @app.get("/api/health/summary")
 def health_summary():
-    health = health()
+    health_data = health()
 
-    prompt = format_health_for_ai(health)
+    prompt = format_health_for_ai(health_data)
 
     response = client.response.create(
         model = "gpt-5-nano",

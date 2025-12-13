@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi import HTTPException
 from datetime import datetime, timezone
 import os
 import socket
@@ -8,7 +9,13 @@ from openai import OpenAI
 
 app = FastAPI()
 BOOT_TIME = psutil.boot_time()
-client = OpenAI(api_key=os.getenv("OPEN_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def get_openai_client():
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not set")
+    return OpenAI(api_key=key)
 
 
 @app.get("/")

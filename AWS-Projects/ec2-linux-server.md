@@ -92,6 +92,47 @@ Client
 
 ---
 
+## Security & Hardening
+
+This project implements multiple layers of security to mirror real-world production practices while maintaining developer accessibility.
+
+### Network Security
+- AWS Security Groups restrict inbound traffic to only required ports:
+  - **22 (SSH)** – Key-based access only
+  - **80 (HTTP)** – Redirects to HTTPS
+  - **443 (HTTPS)** – Public web access
+- No other inbound ports are exposed
+
+### SSH Hardening
+- SSH access is restricted to **key-based authentication**
+- Password-based login is disabled
+- Root login is disabled
+- SSH is kept enabled to support VS Code Remote SSH during development
+
+### Fail2ban (Intrusion Prevention)
+- Fail2ban actively monitors SSH authentication logs
+- Automatically bans IPs after repeated failed login attempts
+- Provides protection against brute-force and automated scanning attacks
+- Works alongside AWS Security Groups for layered defense
+
+### Web Application Security
+- NGINX acts as a reverse proxy, isolating the FastAPI application from direct internet access
+- The FastAPI application runs privately on localhost within a Docker container
+- Only NGINX is publicly exposed
+- TLS encryption is enforced using Let’s Encrypt certificates
+
+### Defense-in-Depth Approach
+Security is implemented at multiple layers:
+1. AWS Security Groups (network perimeter)
+2. Linux firewall and intrusion prevention (Fail2ban)
+3. SSH hardening (key-only access)
+4. Reverse proxy isolation (NGINX)
+5. Containerized application runtime (Docker)
+
+This layered approach ensures that a failure at one level does not compromise the entire system.
+
+---
+
 ## Conclusion
 This project provided hands-on experience deploying and securing a web application in a cloud environment.
 By configuring firewalls, reverse proxies, containerization, and service automation,

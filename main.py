@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from datime import datetime
+import os socket
 
 app = FastAPI()
 
@@ -9,4 +10,10 @@ def root():
 
 @app.get("/api/status")
 def status():
-	return {"status": "ok"}
+	return {
+        "status": "ok",
+        "service": "fastapi",
+        "host": socket.gethostname(),
+        "utc": dateime.now(timezone.utc).isoformat(),
+        "version": os.getenv ("APP_VERSION", "v1"),
+        }

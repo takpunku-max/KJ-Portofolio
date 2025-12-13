@@ -1,107 +1,308 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>KJ Akpunku – IT Student & Support Technician</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>KJ Akpunku | IT / Cloud Portfolio</title>
   <style>
-    :root{
+    :root {
       --bg: #0b1020;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --line: rgba(255,255,255,.14);
-      --accent: #6ea8ff;
-      --accent2: #61ffb6;
-      --shadow: 0 18px 50px rgba(0,0,0,.45);
-      --radius: 16px;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.08);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 20px 70px rgba(0,0,0,0.35);
+
+      --accent: #60a5fa;   /* blue */
+      --ok: #34d399;       /* green */
+      --warn: #fbbf24;     /* amber */
+      --bad: #fb7185;      /* pink/red */
+      --chip: rgba(255,255,255,0.10);
+      --chipBorder: rgba(255,255,255,0.14);
     }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f7f8fb; --card:#ffffff; --card2:#f3f5fb; --text:#0b1020; --muted:#4b5563; --line:#e6e8f0;
-        --shadow: 0 18px 50px rgba(12,18,38,.10);
-      }
+
+    /* Light theme overrides */
+    [data-theme="light"] {
+      --bg: #f6f7fb;
+      --panel: rgba(0,0,0,0.04);
+      --panel2: rgba(0,0,0,0.06);
+      --text: rgba(0,0,0,0.88);
+      --muted: rgba(0,0,0,0.60);
+      --border: rgba(0,0,0,0.12);
+      --shadow: 0 20px 70px rgba(0,0,0,0.12);
+
+      --accent: #2563eb;
+      --ok: #059669;
+      --warn: #d97706;
+      --bad: #e11d48;
+      --chip: rgba(0,0,0,0.06);
+      --chipBorder: rgba(0,0,0,0.10);
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
-      background: radial-gradient(1100px 500px at 20% 0%, rgba(110,168,255,.18), transparent),
-                  radial-gradient(900px 450px at 80% 10%, rgba(97,255,182,.12), transparent),
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(96,165,250,0.20), transparent 60%),
+                  radial-gradient(900px 600px at 85% 0%, rgba(52,211,153,0.12), transparent 60%),
                   var(--bg);
       color: var(--text);
       line-height: 1.55;
     }
-    a{color: var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width: 980px; margin: 0 auto; padding: 28px 18px 70px}
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      padding: 14px 16px; border:1px solid var(--line); background: var(--card);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      position: sticky; top: 14px; backdrop-filter: blur(10px);
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
     }
-    .brand{display:flex; gap:10px; align-items:center}
-    .dot{width:10px; height:10px; border-radius:999px; background: var(--accent2); box-shadow: 0 0 20px rgba(97,255,182,.55)}
-    .brand b{font-size: 1.05rem}
-    .nav{display:flex; flex-wrap:wrap; gap:10px}
-    .btn{
-      display:inline-flex; align-items:center; gap:8px;
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
       padding: 9px 12px;
-      border:1px solid var(--line);
-      background: var(--card2);
+      border-radius: 12px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
+      cursor: pointer;
+      font-size: 13px;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn:hover { background: var(--panel2); }
+    .btn:active { transform: translateY(1px); }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: radial-gradient(700px 250px at 20% 0%, rgba(96,165,250,0.25), transparent 60%),
+                  radial-gradient(700px 250px at 80% 0%, rgba(52,211,153,0.14), transparent 60%);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .hero > * { position: relative; }
+
+    .heroGrid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .heroGrid { grid-template-columns: 1fr; }
+    }
+
+    .headline {
+      margin: 0 0 8px;
+      font-size: 36px;
+      letter-spacing: -0.7px;
+      line-height: 1.1;
+    }
+
+    .subhead {
+      margin: 0 0 16px;
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .metaRow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metaRow a {
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.08);
+      padding: 8px 10px;
       border-radius: 999px;
-      font-size: .92rem;
-      color: var(--text);
-      text-decoration:none;
-      cursor:pointer;
-      user-select:none;
+      text-decoration: none;
     }
-    .btn:hover{filter: brightness(1.05)}
-    .btn.primary{border-color: rgba(110,168,255,.45); box-shadow: 0 0 0 3px rgba(110,168,255,.12) inset}
-    .hero{
-      margin-top: 18px;
-      padding: 26px 22px;
-      border:1px solid var(--line);
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    [data-theme="light"] .metaRow a { background: rgba(255,255,255,0.7); }
+    .metaRow a:hover { background: var(--panel2); }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 16px;
     }
-    h1{margin:0 0 6px; font-size: 2.05rem; letter-spacing:-.02em}
-    .subtitle{color: var(--muted); margin:0}
-    .grid{
-      margin-top: 16px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 14px;
+
+    .cardTitle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
     }
-    @media (max-width: 900px){ .grid{grid-template-columns: 1fr} .topbar{position:static} }
-    .card{
-      padding: 18px;
-      border:1px solid var(--line);
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+
+    .cardTitle h3 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
     }
-    .card h2{margin:0 0 10px; font-size: 1.15rem}
-    .muted{color: var(--muted)}
-    .tags{display:flex; flex-wrap:wrap; gap:8px}
-    .tag{
+
+    .pill {
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
       padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.10);
+    }
+    [data-theme="light"] .pill { background: rgba(255,255,255,0.7); }
+
+    .dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--warn);
+      box-shadow: 0 0 0 3px rgba(251,191,36,0.18);
+    }
+
+    .dot.ok { background: var(--ok); box-shadow: 0 0 0 3px rgba(52,211,153,0.18); }
+    .dot.bad { background: var(--bad); box-shadow: 0 0 0 3px rgba(251,113,133,0.18); }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px 10px;
+      font-size: 14px;
+    }
+    .kv div:nth-child(odd) { color: var(--muted); }
+
+    .section {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 860px) {
+      .section { grid-template-columns: 1fr; }
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .chip {
+      border: 1px solid var(--chipBorder);
+      background: var(--chip);
       border-radius: 999px;
-      border:1px solid var(--line);
-      background: var(--card2);
-      font-size: .86rem;
+      padding: 8px 10px;
+      font-size: 13px;
       color: var(--text);
     }
-    .item{margin-top: 12px; padding-top: 12px; border-top:1px solid var(--line)}
-    .item:first-of-type{margin-top:0; padding-top:0; border-top:none}
-    .item h3{margin:0 0 4px; font-size: 1rem}
-    ul{margin: 8px 0 0; padding-left: 18px}
-    code{background: rgba(110,168,255,.12); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(110,168,255,.20)}
-    footer{margin-top: 22px; color: var(--muted); font-size: .9rem; text-align:center}
+
+    .list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+    .list li { margin: 6px 0; }
+
+    .proj {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .projItem {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.08);
+      padding: 12px;
+    }
+    [data-theme="light"] .projItem { background: rgba(255,255,255,0.7); }
+    .projItem h4 { margin: 0 0 4px; font-size: 15px; }
+    .projItem p { margin: 0; color: var(--muted); font-size: 13px; }
+    .projLinks { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .projLinks a {
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 7px 10px;
+      border-radius: 12px;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    code.inline {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+    }
+    [data-theme="light"] code.inline { background: rgba(0,0,0,0.06); }
+
   </style>
 </head>
 
@@ -109,106 +310,214 @@
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <span class="dot"></span>
-        <b>KJ Akpunku</b>
+        <h1>KJ Akpunku</h1>
+        <div class="tagline">WGU BSIT (Summer 2027) · IT Student Worker · Texas</div>
       </div>
 
-      <div class="nav">
-        <a class="btn primary" href="https://github.com/takpunku-max" target="_blank" rel="noreferrer">GitHub</a>
-        <a class="btn" href="https://linkedin.com/in/kj-akpunku-113968255" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a class="btn" href="mailto:takpun1@wgu.edu">Email</a>
-        <a class="btn" href="/AWS-Projects/ec2-linux-server.md" target="_blank" rel="noreferrer">EC2 Project Writeup</a>
-        <a class="btn" href="/status">Status Dashboard</a>
+      <div class="controls">
+        <button class="btn" id="themeBtn" type="button" aria-label="Toggle theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark</span>
+        </button>
+
+        <a class="btn" href="https://github.com/takpunku-max" target="_blank" rel="noreferrer">
+          GitHub ↗
+        </a>
       </div>
     </div>
 
-    <section class="hero">
-      <h1>KJ Akpunku</h1>
-      <p class="subtitle">WGU BSIT Student (Expected Summer 2027) • IT Student Worker – Texas A&amp;M System Office • Texas, USA</p>
-      <p class="subtitle">Focused on systems, cloud, and infrastructure support (AWS/Linux/networking).</p>
-    </section>
+    <div class="hero">
+      <div class="heroGrid">
+        <div>
+          <h2 class="headline">Cloud & Linux projects that ship.</h2>
+          <p class="subhead">
+            I’m building production-style labs on AWS (EC2, NGINX, Docker, FastAPI) with real security practices:
+            least-privilege access, key-based SSH, reverse proxying, and monitoring.
+          </p>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Summary</h2>
-        <p class="muted">
-          IT student and hands-on support technician with experience in enterprise help desk, account administration, and Linux/AWS labs.
-          Comfortable troubleshooting systems, working tickets, and building production-style infrastructure projects.
-        </p>
-
-        <div class="item">
-          <h2>Experience</h2>
-          <div class="item">
-            <h3>IT Student Worker – Texas A&amp;M System Office</h3>
-            <div class="muted">Aug 2024 – Present</div>
-            <ul>
-              <li>Resolve account access, login, and software issues; escalate complex cases as needed.</li>
-              <li>Document incidents and resolutions in the ticketing system.</li>
-              <li>Support basic user administration (password resets, account changes).</li>
-            </ul>
+          <div class="metaRow">
+            <!-- Replace these with your real links -->
+            <a href="mailto:takpun1@wgu.edu">takpun1@wgu.edu</a>
+            <a href="https://www.linkedin.com/in/kj-akpunku-113968255" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="/api/status" target="_blank" rel="noreferrer">API Status JSON ↗</a>
           </div>
         </div>
 
-        <div class="item">
-          <h2>Projects</h2>
-
-          <div class="item">
-            <h3>AWS EC2 Web Server (NGINX + Docker + FastAPI)</h3>
-            <div class="muted">Personal Lab</div>
-            <ul>
-              <li>Hosted a resume site + FastAPI app behind <code>NGINX</code> reverse proxy.</li>
-              <li>Secured access with SSH key auth; deployed containers with Docker; enabled auto-restart via systemd.</li>
-              <li>Added a health/status endpoint and public status dashboard.</li>
-            </ul>
+        <div class="card" aria-live="polite">
+          <div class="cardTitle">
+            <h3>Service Status</h3>
+            <span class="pill"><span class="dot" id="statusDot"></span><span id="statusText">Checking…</span></span>
           </div>
 
-          <div class="item">
-            <h3>Cisco Packet Tracer – Small Office Network Simulation</h3>
-            <div class="muted">WGU / Personal Lab</div>
-            <ul>
-              <li>Built a small-office topology with switching, routing, and wireless segment.</li>
-              <li>Validated connectivity using ping/traceroute and fixed misconfigs.</li>
-            </ul>
+          <div class="kv" id="statusKV">
+            <div>Domain</div><div><code class="inline">aws.ubuntu-servervm.work</code></div>
+            <div>Uptime</div><div id="uptime">—</div>
+            <div>Host</div><div id="host">—</div>
+            <div>UTC</div><div id="utc">—</div>
+            <div>Version</div><div id="version">—</div>
           </div>
-        </div>
-      </section>
 
-      <aside class="card">
-        <h2>Skills</h2>
-        <div class="tags">
-          <span class="tag">Linux (Ubuntu)</span>
-          <span class="tag">AWS EC2</span>
-          <span class="tag">NGINX</span>
-          <span class="tag">SSH</span>
-          <span class="tag">Docker</span>
-          <span class="tag">FastAPI</span>
-          <span class="tag">Uvicorn</span>
-          <span class="tag">Networking Fundamentals</span>
-          <span class="tag">Help Desk / Ticketing</span>
-          <span class="tag">Active Directory (basic)</span>
-        </div>
-
-        <div class="item">
-          <h2>Quick Links</h2>
-          <ul>
-            <li><a href="/status">Status Dashboard</a></li>
-            <li><a href="/api/status">API status JSON</a></li>
-          </ul>
-        </div>
-
-        <div class="item">
-          <h2>Education</h2>
-          <div class="item">
-            <h3>Western Governors University – B.S. Information Technology</h3>
-            <div class="muted">Expected Graduation: Summer 2027</div>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" type="button" id="refreshBtn">Refresh</button>
+            <a class="btn" href="/api/status" target="_blank" rel="noreferrer">View JSON</a>
           </div>
+
+          <p style="margin:12px 0 0; color:var(--muted); font-size:12px;">
+            This card pulls live data from <code class="inline">/api/status</code> via NGINX reverse proxy.
+          </p>
         </div>
-      </aside>
+      </div>
     </div>
 
-    <footer>
-      Served by NGINX • API in Docker • Built on AWS EC2
-    </footer>
+    <div class="section">
+      <div class="card">
+        <div class="cardTitle">
+          <h3>Skills</h3>
+        </div>
+        <div class="chips">
+          <span class="chip">AWS EC2</span>
+          <span class="chip">Linux (Amazon Linux / Ubuntu)</span>
+          <span class="chip">NGINX (Reverse Proxy)</span>
+          <span class="chip">Docker</span>
+          <span class="chip">FastAPI</span>
+          <span class="chip">SSH (Key-based)</span>
+          <span class="chip">Security Groups / Firewall</span>
+          <span class="chip">CloudWatch (intro)</span>
+          <span class="chip">Git & GitHub</span>
+        </div>
+
+        <ul class="list">
+          <li>Focused on practical infrastructure, troubleshooting, and safe defaults.</li>
+          <li>Comfortable reading logs and diagnosing network/service issues.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="cardTitle">
+          <h3>Experience</h3>
+        </div>
+        <div class="projItem">
+          <h4>IT Student Worker — Texas A&amp;M System Office</h4>
+          <p>Help desk support, account administration, ticketing, troubleshooting, escalation.</p>
+        </div>
+
+        <ul class="list">
+          <li>Document fixes clearly so others can repeat them.</li>
+          <li>Hands-on with user support + foundational IT operations.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card">
+        <div class="cardTitle">
+          <h3>Projects</h3>
+        </div>
+
+        <div class="proj">
+          <div class="projItem">
+            <h4>AWS EC2 Web App (NGINX + Docker + FastAPI)</h4>
+            <p>Production-style deployment: reverse proxy routing, local-only app port, HTTPS, and monitoring endpoint.</p>
+            <div class="projLinks">
+              <!-- Put your actual README link here -->
+              <a href="https://github.com/takpunku-max/KJ-Portfolio/blob/main/AWS-Projects/ec2-linux-server.md" target="_blank" rel="noreferrer">Readme ↗</a>
+              <a href="/api/status" target="_blank" rel="noreferrer">Live Status ↗</a>
+            </div>
+          </div>
+
+          <div class="projItem">
+            <h4>Next: Status Dashboard UI</h4>
+            <p>Build a real dashboard page (charts + checks) powered by your API. No “toy” project — it’ll be deployable.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardTitle">
+          <h3>What I’m working on</h3>
+        </div>
+        <ul class="list">
+          <li>Automated deploys (GitHub Actions → EC2)</li>
+          <li>Basic observability: uptime checks, logs, alerts</li>
+          <li>Safer access patterns: SSM Session Manager, Fail2ban</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>© <span id="year"></span> KJ Akpunku</div>
+      <div>Built on AWS EC2 · NGINX · Docker · FastAPI</div>
+    </div>
   </div>
+
+  <script>
+    // --- Theme (dark by default, toggle + persistence) ---
+    (function initTheme() {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const initial = saved || (prefersDark ? "dark" : "light");
+      setTheme(initial);
+
+      document.getElementById("themeBtn").addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        setTheme(next);
+        localStorage.setItem("theme", next);
+      });
+
+      function setTheme(mode) {
+        document.documentElement.setAttribute("data-theme", mode);
+        document.getElementById("themeIcon").textContent = mode === "dark" ? "🌙" : "☀️";
+        document.getElementById("themeText").textContent = mode === "dark" ? "Dark" : "Light";
+      }
+    })();
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // --- Status fetch from /api/status ---
+    async function loadStatus() {
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
+
+      const host = document.getElementById("host");
+      const utc = document.getElementById("utc");
+      const version = document.getElementById("version");
+      const uptime = document.getElementById("uptime");
+
+      dot.className = "dot";
+      text.textContent = "Checking…";
+
+      try {
+        const res = await fetch("/api/status", { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        const data = await res.json();
+
+        // Basic assumptions: {status:"ok", host, utc, version}
+        const ok = (data.status || "").toLowerCase() === "ok";
+
+        dot.className = "dot " + (ok ? "ok" : "");
+        text.textContent = ok ? "LIVE" : "DEGRADED";
+
+        host.textContent = data.host || "—";
+        utc.textContent = data.utc || "—";
+        version.textContent = data.version || "—";
+
+        // If you later add uptime to your API, it will show up automatically.
+        uptime.textContent = data.uptime || "—";
+
+      } catch (e) {
+        dot.className = "dot bad";
+        text.textContent = "DOWN";
+        host.textContent = "—";
+        utc.textContent = "—";
+        version.textContent = "—";
+        uptime.textContent = "—";
+      }
+    }
+
+    document.getElementById("refreshBtn").addEventListener("click", loadStatus);
+    loadStatus();
+  </script>
 </body>
 </html>

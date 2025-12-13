@@ -18,6 +18,7 @@ Client
       → EC2 Instance (Public)
           → NGINX (Reverse Proxy, Port 80)
               → FastAPI Application (Docker, localhost:8000)
+```text
 
 
 

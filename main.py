@@ -21,6 +21,21 @@ def format_health_for_ai(health_data: dict) -> str:
         + json.dumps(health_data, indent=2)
     )
 
+@app.get("/api/status")
+def status():
+    uptime_seconds = int(time.time() - BOOT_TIME)
+
+    return {
+        "status": "ok",
+        "service": "fastapi",
+        "host": socket.gethostname(),
+        "utc": datetime.now(timezone.utc).isoformat(),
+        "app_version": os.getenv("APP_VERSION", "v1"),
+        "uptime_seconds": uptime_seconds,
+        "container": os.path.exists("/.dockerenv"),
+        "python": os.sys.version.split()[0],
+    }
+
 @app.get("/api/system")
 def system():
     uptime_seconds = int(time.time() - BOOT_TIME)

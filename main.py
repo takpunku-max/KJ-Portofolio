@@ -4,6 +4,7 @@ import os
 import socket
 from pydantic import BaseModel # type: ignore
 from openai import OpenAI # type: ignore
+from fastapi import HTTPException # type: ignore
 
 app = FastAPI()
 STARTED_AT = datetime.now(timezone.utc)
@@ -76,4 +77,36 @@ status.json: {status}
     )
 
     return {"reply": resp.output_text}
+
+
+@app.get("/api/ai/health-explain")
+def ai_health_explain_get():
+    """
+    Browser-friendly GET: pulls the current health + status and returns an AI summary.
+    (No request body needed.)
+    """
+    if not os.getenv("OPENAI_API_KEY"):
+        raise HTTPException(status_code=503, detail="AI unavailable (missing API key)")
+
+    health_data = health()
+    status_data = status()
+
+    prompt = f"""You are an SRE assistant. Explain this service health in plain English.
+Be concise (6-10 bullets), include: overall status, uptime, hostname, version, and any red flags.
+If everything looks normal, say so.
+
+health.json: {health_data}
+status.json: {status_data}
+"""
+
+    try:
+        client = OpenAI()
+        resp = client.responses.create(
+            model=os.getenv("AI_MODEL", "gpt-5-nano"),
+            input=prompt,
+        )
+        return {"reply": resp.output_text, "health": health_data, "status": status_data}
+    except Exception as e:
+        # keep it simple; don’t leak internals
+        raise HTTPException(status_code=502, detail="AI request failed")
 

@@ -24,12 +24,17 @@ def root():
 
 @app.get("/api/status")
 def status():
+    uptime_seconds = int(
+        (datetime.now(timezone.utc) - STARTED_AT).total_seconds()
+    )
+
     return {
         "status": "ok",
         "service": "fastapi",
         "host": socket.gethostname(),
         "utc": datetime.now(timezone.utc).isoformat(),
         "version": os.getenv("APP_VERSION", "v1"),
+        "uptime_seconds": uptime_seconds
     }
 
 

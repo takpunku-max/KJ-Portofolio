@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Health Summary</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    pre { background:#111; color:#eee; padding:16px; border-radius:12px; overflow:auto; white-space:pre-wrap; }
+    button { padding:10px 14px; border-radius:10px; border:1px solid #ddd; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h1>AI Health Summary</h1>
+  <p>Pulls /api/health + /api/status and asks an LLM to summarize it for humans.</p>
+  <button id="run">Generate Summary</button>
+  <pre id="out">Click “Generate Summary”.</pre>
+
+  <script>
+    const out = document.getElementById("out");
+    async function go() {
+      out.textContent = "Loading health + status…";
+      const [h, s] = await Promise.all([
+        fetch("/api/health").then(r => r.json()),
+        fetch("/api/status").then(r => r.json()),
+      ]);
+
+      out.textContent = "Asking AI…";
+      const r = await fetch("/api/ai/health-explain", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ health: h, status: s })
+      });
+
+      if (!r.ok) {
+        out.textContent = "AI request failed. Check server logs and OPENAI_API_KEY.";
+        return;
+      }
+      const data = await r.json();
+      out.textContent = data.reply || "(No reply)";
+    }
+    document.getElementById("run").addEventListener("click", go);
+  </script>
+</body>
+</html>

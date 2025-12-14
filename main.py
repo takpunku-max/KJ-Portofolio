@@ -66,7 +66,7 @@ status.json: {status}
 
     client = OpenAI()
     resp = client.responses.create(
-        model=os.getenv("AI_MODEL", "gpt-4.1-mini"),
+        model=os.getenv("AI_MODEL", "gpt-5-nano"),
         input=[
             {"role": "system", "content": "You are an SRE summarizing service health for operators."},
             {"role": "user", "content": prompt}

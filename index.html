@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="dark light" />
+  <meta name="color-scheme" content="dark" />
   <title>KJ Akpunku | IT / Cloud Portfolio</title>
   <style>
     :root {
@@ -23,32 +23,14 @@
       --chipBorder: rgba(255,255,255,0.14);
     }
 
-    /* Light theme overrides */
-    [data-theme="light"] {
-      --bg: #f6f7fb;
-      --panel: rgba(0,0,0,0.04);
-      --panel2: rgba(0,0,0,0.06);
-      --text: rgba(0,0,0,0.88);
-      --muted: rgba(0,0,0,0.60);
-      --border: rgba(0,0,0,0.12);
-      --shadow: 0 20px 70px rgba(0,0,0,0.12);
 
-      --accent: #2563eb;
-      --ok: #059669;
-      --warn: #d97706;
-      --bad: #e11d48;
-      --chip: rgba(0,0,0,0.06);
-      --chipBorder: rgba(0,0,0,0.10);
-    }
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 700px at 15% 10%, rgba(96,165,250,0.20), transparent 60%),
-                  radial-gradient(900px 600px at 85% 0%, rgba(52,211,153,0.12), transparent 60%),
-                  var(--bg);
+      background: #0b1020;
       color: var(--text);
       line-height: 1.55;
     }
@@ -301,7 +283,7 @@
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.15);
     }
-    [data-theme="light"] code.inline { background: rgba(0,0,0,0.06); }
+    [data-theme="dark"] code.inline { background: rgba(0,0,0,0.06); }
 
   </style>
 </head>
@@ -315,10 +297,6 @@
       </div>
 
       <div class="controls">
-        <button class="btn" id="themeBtn" type="button" aria-label="Toggle theme">
-          <span id="themeIcon">🌙</span>
-          <span id="themeText">Dark</span>
-        </button>
 
         <a class="btn" href="https://github.com/takpunku-max" target="_blank" rel="noreferrer">
           GitHub ↗
@@ -351,10 +329,11 @@
 
           <div class="kv" id="statusKV">
             <div>Domain</div><div><code class="inline">aws.ubuntu-servervm.work</code></div>
-            <div>Uptime</div><div id="uptime">—</div>
+            <div>Uptime</div><div id="uptime">-</div>
+	    <div>Version</div><div id="version">-</div>
             <div>Host</div><div id="host">—</div>
             <div>UTC</div><div id="utc">—</div>
-            <div>Version</div><div id="version">—</div>
+            
           </div>
 
           <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -451,73 +430,64 @@
   </div>
 
   <script>
-    // --- Theme (dark by default, toggle + persistence) ---
-    (function initTheme() {
-      const saved = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initial = saved || (prefersDark ? "dark" : "light");
-      setTheme(initial);
+	  // Footer year
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-      document.getElementById("themeBtn").addEventListener("click", () => {
-        const current = document.documentElement.getAttribute("data-theme") || "dark";
-        const next = current === "dark" ? "light" : "dark";
-        setTheme(next);
-        localStorage.setItem("theme", next);
-      });
+  function formatUptime(seconds) {
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
 
-      function setTheme(mode) {
-        document.documentElement.setAttribute("data-theme", mode);
-        document.getElementById("themeIcon").textContent = mode === "dark" ? "🌙" : "☀️";
-        document.getElementById("themeText").textContent = mode === "dark" ? "Dark" : "Light";
-      }
-    })();
+    if (d > 0) return `${d}d ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+  }
 
-    document.getElementById("year").textContent = new Date().getFullYear();
+  // --- Status fetch from /api/status ---
+  async function loadStatus() {
+    const dot = document.getElementById("statusDot");
+    const text = document.getElementById("statusText");
 
-    // --- Status fetch from /api/status ---
-    async function loadStatus() {
-      const dot = document.getElementById("statusDot");
-      const text = document.getElementById("statusText");
+    const host = document.getElementById("host");
+    const utc = document.getElementById("utc");
+    const version = document.getElementById("version");
+    const uptime = document.getElementById("uptime");
 
-      const host = document.getElementById("host");
-      const utc = document.getElementById("utc");
-      const version = document.getElementById("version");
-      const uptime = document.getElementById("uptime");
+    dot.className = "dot";
+    text.textContent = "Checking…";
 
-      dot.className = "dot";
-      text.textContent = "Checking…";
+    try {
+      const res = await fetch("/api/status", { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
 
-      try {
-        const res = await fetch("/api/status", { cache: "no-store" });
-        if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
 
-        const data = await res.json();
+      const ok = (data.status || "").toLowerCase() === "ok";
 
-        // Basic assumptions: {status:"ok", host, utc, version}
-        const ok = (data.status || "").toLowerCase() === "ok";
+      dot.className = "dot " + (ok ? "ok" : "bad");
+      text.textContent = ok ? "LIVE" : "DEGRADED";
 
-        dot.className = "dot " + (ok ? "ok" : "");
-        text.textContent = ok ? "LIVE" : "DEGRADED";
+      host.textContent = data.host || "—";
+      utc.textContent = data.utc || "—";
+      version.textContent = data.version ?? "v1";
+      uptime.textContent = formatUptime(data.uptime_seconds ?? 0);
 
-        host.textContent = data.host || "—";
-        utc.textContent = data.utc || "—";
-        version.textContent = data.version || "—";
-
-        // If you later add uptime to your API, it will show up automatically.
-        uptime.textContent = data.uptime || "—";
-
-      } catch (e) {
-        dot.className = "dot bad";
-        text.textContent = "DOWN";
-        host.textContent = "—";
-        utc.textContent = "—";
-        version.textContent = "—";
-        uptime.textContent = "—";
-      }
+    } catch (err) {
+      console.error(err);
+      dot.className = "dot bad";
+      text.textContent = "ERROR";
+      host.textContent = "—";
+      utc.textContent = "—";
+      version.textContent = "—";
+      uptime.textContent = "—";
     }
+  }
 
-    document.getElementById("refreshBtn").addEventListener("click", loadStatus);
-    loadStatus();
+  // Button wiring
+  document.getElementById("refreshBtn").addEventListener("click", loadStatus);
+
+  // Initial load
+  loadStatus();
   </script>
 </body>
 </html>

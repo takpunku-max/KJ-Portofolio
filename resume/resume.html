@@ -394,27 +394,37 @@
           <h3>Projects</h3>
         </div>
 
-        <div class="proj">
-          <div class="projItem">
-            <h4>AWS EC2 Web App (NGINX + Docker + FastAPI)</h4>
-            <p>Production-style deployment: reverse proxy routing, local-only app port, HTTPS, and monitoring endpoint.</p>
-            <div class="projLinks">
-              <!-- Put your actual README link here -->
-              <a href="https://github.com/takpunku-max/KJ-Portfolio/blob/main/AWS-Projects/ec2-linux-server.md" target="_blank" rel="noreferrer">Readme ↗</a>
-              <a href="/api/status" target="_blank" rel="noreferrer">Live Status ↗</a>
-            </div>
-          </div>
-
-          <div class="projItem">
-            <ul>
-              <li>Built and deployed a Dockerized FastAPI application on AWS EC2 behind Nginx (TLS/Let’s Encrypt), serving a static portfolio site and API endpoints.</li>
-              <li>Implemented health and status APIs (<code>/api/health</code>, <code>/api/status</code>) to expose uptime, hostname, and service metadata for operational visibility.</li>
-              <li>Integrated OpenAI (default <strong>gpt-5-nano</strong>) to generate operator-friendly health explanations from structured JSON via <code>/api/ai/health-explain</code> (POST + browser-friendly GET).</li>
-              <li>Developed an AI Health dashboard page (<code>/ai-health.html</code>) that fetches live metrics, requests an AI summary, and optionally displays raw JSON for troubleshooting.</li>
-              <li>Hardened secret handling by keeping the OpenAI API key server-side (environment variables injected into the container at runtime) and avoiding client-side exposure.</li>
-              <li>Automated deployments with GitHub Actions (push-to-deploy) using SSH to run a server deploy script that pulls code, rebuilds Docker images, restarts the container, and reloads Nginx.</li>
-              <li>Optimized model selection through environment-configurable <code>AI_MODEL</code> to right-size cost and latency for deterministic summarization workloads.</li>
+        <div class="project-grid">
+          <!-- LEFT: Highlights -->
+          <div>
+            <ul class="project-bullets">
+              <li>Deployed Dockerized FastAPI on AWS EC2 behind Nginx (TLS/Let’s Encrypt).</li>
+              <li>Implemented health & status APIs for uptime and service metadata.</li>
+              <li>Integrated OpenAI (<strong>gpt-5-nano</strong>) to summarize operational health from JSON.</li>
+              <li>Built an AI Health dashboard with live metrics and raw JSON toggle.</li>
+              <li>Automated push-to-deploy via GitHub Actions → SSH → Docker rebuild.</li>
             </ul>
+          </div>
+        
+          <!-- RIGHT: Quick Facts -->
+          <div class="project-meta">
+            <div><strong>Tech</strong></div>
+            <div>AWS EC2 · Nginx · Docker · FastAPI</div>
+            <div>GitHub Actions · OpenAI API</div>
+        
+            <div class="meta-spacer"></div>
+        
+            <div><strong>Endpoints</strong></div>
+            <div><code>/api/health</code></div>
+            <div><code>/api/status</code></div>
+            <div><code>/api/ai/health-explain</code></div>
+        
+            <div class="meta-spacer"></div>
+        
+            <div><strong>Links</strong></div>
+            <a class="btn small" href="/ai-health.html">AI Health</a>
+            <a class="btn small" href="/resume.html">Resume</a>
+            <a class="btn small" href="https://github.com/YOUR_USERNAME/YOUR_REPO">GitHub</a>
           </div>
         </div>
       </div>

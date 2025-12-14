@@ -56,9 +56,11 @@ def ai_health_explain(payload: ExplainIn):
         return {"reply": "AI service unavailable (missing API key)."}
 
     prompt = f"""Explain this service health in plain English.
-Use 6–10 short bullets.
+Use 5-8 short bullets.
 Include overall status, uptime, hostname, version, and any red flags.
 If everything looks normal, say so.
+Mention red flags only if present
+Do NOT speculate
 
 health.json: {health}
 status.json: {status}

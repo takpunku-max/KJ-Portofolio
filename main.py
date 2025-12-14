@@ -12,7 +12,10 @@ class ExplainIn(BaseModel):
     health: dict
     status: dict
 
-client = OpenAI()  # reads OPENAI_API_KEY from env  [oai_citation:0‡OpenAI Platform](https://platform.openai.com/docs/quickstart?utm_source=chatgpt.com)
+def get_client():
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError("OPENAI_API_KEY is not set")
+    return OpenAI()  # reads OPENAI_API_KEY from env  [oai_citation:0‡OpenAI Platform](https://platform.openai.com/docs/quickstart?utm_source=chatgpt.com)
 
 @app.get("/")
 def root():
@@ -43,22 +46,32 @@ def health():
 
 @app.post("/api/ai/health-explain")
 def ai_health_explain(payload: ExplainIn):
-    # Basic guardrail: don’t send secrets/logs/etc.
     health = payload.health
     status = payload.status
 
-    prompt = f"""You are an SRE assistant. Explain this service health in plain English.
-Be concise (6-10 bullets), include: overall status, uptime, hostname, version, and any red flags.
+    if len(str(health)) > 2000 or len(str(status)) > 2000:
+        return {"reply": "Health data too large to summarize safely."}
+
+    if not os.getenv("OPENAI_API_KEY"):
+        return {"reply": "AI service unavailable (missing API key)."}
+
+    prompt = f"""Explain this service health in plain English.
+Use 6–10 short bullets.
+Include overall status, uptime, hostname, version, and any red flags.
 If everything looks normal, say so.
 
 health.json: {health}
 status.json: {status}
 """
 
+    client = OpenAI()
     resp = client.responses.create(
         model=os.getenv("AI_MODEL", "gpt-4.1-mini"),
-        input=prompt,
-    )  # Responses API  [oai_citation:1‡OpenAI Platform](https://platform.openai.com/docs/api-reference/responses?utm_source=chatgpt.com)
+        input=[
+            {"role": "system", "content": "You are an SRE summarizing service health for operators."},
+            {"role": "user", "content": prompt}
+        ],
+    )
 
     return {"reply": resp.output_text}
 

@@ -406,15 +406,6 @@
           </div>
 
           <div class="projItem">
-            <ul>
-              <li>Built and deployed a Dockerized FastAPI application on AWS EC2 behind Nginx (TLS/Let’s Encrypt), serving a static portfolio site and API endpoints.</li>
-              <li>Implemented health and status APIs (<code>/api/health</code>, <code>/api/status</code>) to expose uptime, hostname, and service metadata for operational visibility.</li>
-              <li>Integrated OpenAI (default <strong>gpt-5-nano</strong>) to generate operator-friendly health explanations from structured JSON via <code>/api/ai/health-explain</code> (POST + browser-friendly GET).</li>
-              <li>Developed an AI Health dashboard page (<code>/ai-health.html</code>) that fetches live metrics, requests an AI summary, and optionally displays raw JSON for troubleshooting.</li>
-              <li>Hardened secret handling by keeping the OpenAI API key server-side (environment variables injected into the container at runtime) and avoiding client-side exposure.</li>
-              <li>Automated deployments with GitHub Actions (push-to-deploy) using SSH to run a server deploy script that pulls code, rebuilds Docker images, restarts the container, and reloads Nginx.</li>
-              <li>Optimized model selection through environment-configurable <code>AI_MODEL</code> to right-size cost and latency for deterministic summarization workloads.</li>
-            </ul>
           </div>
         </div>
       </div>

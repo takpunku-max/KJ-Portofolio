@@ -1,45 +1,100 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Health Summary</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; }
-    pre { background:#111; color:#eee; padding:16px; border-radius:12px; overflow:auto; white-space:pre-wrap; }
-    button { padding:10px 14px; border-radius:10px; border:1px solid #ddd; cursor:pointer; }
+    :root { --bg:#0b0f14; --card:#121826; --text:#e5e7eb; --muted:#9ca3af; --border:#243042; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width: 980px; margin: 48px auto; padding: 0 18px; }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 18px; }
+    h1 { font-size: 28px; margin:0; }
+    p { margin: 6px 0 0; color: var(--muted); }
+    .card { background:var(--card); border:1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; }
+    button,a.btn { background:#1f2937; color:var(--text); border:1px solid var(--border); padding:10px 12px; border-radius: 12px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+    button:hover,a.btn:hover { filter: brightness(1.08); }
+    pre { white-space: pre-wrap; margin: 14px 0 0; background:#0f1623; border:1px solid var(--border); border-radius: 12px; padding: 14px; overflow:auto; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:14px; margin-top: 14px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1.2fr 0.8fr; } }
+    code { color:#c7d2fe; }
+    .small { font-size: 13px; color: var(--muted); }
   </style>
 </head>
 <body>
-  <h1>AI Health Summary</h1>
-  <p>Pulls /api/health + /api/status and asks an LLM to summarize it for humans.</p>
-  <button id="run">Generate Summary</button>
-  <pre id="out">Click “Generate Summary”.</pre>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>AI Health Summary</h1>
+        <p>LLM-powered explanation of <code>/api/health</code> + <code>/api/status</code>.</p>
+      </div>
+      <div class="btns">
+        <a class="btn" href="/resume.html">← Back to Resume</a>
+        <button id="run">Generate Summary</button>
+        <button id="raw">Show Raw JSON</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="small">Output</div>
+        <pre id="out">Click “Generate Summary”.</pre>
+      </div>
+
+      <div class="card">
+        <div class="small">Notes</div>
+        <p class="small" style="margin-top:10px">
+          This endpoint calls an LLM on the server. Refreshing repeatedly may increase cost.
+        </p>
+        <p class="small">
+          Direct AI API: <a class="btn" style="padding:6px 10px" href="/api/ai/health-explain">/api/ai/health-explain</a>
+        </p>
+      </div>
+    </div>
+  </div>
 
   <script>
     const out = document.getElementById("out");
-    async function go() {
-      out.textContent = "Loading health + status…";
-      const [h, s] = await Promise.all([
+    let cached = { health: null, status: null };
+
+    async function fetchBasics() {
+      const [health, status] = await Promise.all([
         fetch("/api/health").then(r => r.json()),
         fetch("/api/status").then(r => r.json()),
       ]);
+      cached = { health, status };
+      return cached;
+    }
 
-      out.textContent = "Asking AI…";
+    async function runAI() {
+      out.textContent = "Fetching health + status…";
+      const { health, status } = await fetchBasics();
+
+      out.textContent = "Asking AI… (a few seconds)";
       const r = await fetch("/api/ai/health-explain", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ health: h, status: s })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ health, status })
       });
 
       if (!r.ok) {
-        out.textContent = "AI request failed. Check server logs and OPENAI_API_KEY.";
+        out.textContent = `Request failed: ${r.status} ${r.statusText}\n` + await r.text();
         return;
       }
+
       const data = await r.json();
-      out.textContent = data.reply || "(No reply)";
+      out.textContent = data.reply || "(no reply)";
     }
-    document.getElementById("run").addEventListener("click", go);
+
+    async function showRaw() {
+      out.textContent = "Loading raw JSON…";
+      const { health, status } = await fetchBasics();
+      out.textContent = JSON.stringify({ health, status }, null, 2);
+    }
+
+    document.getElementById("run").addEventListener("click", runAI);
+    document.getElementById("raw").addEventListener("click", showRaw);
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
   <title>KJ Akpunku | IT / Cloud Portfolio</title>
   <style>
     :root {
@@ -23,6 +23,23 @@
       --chipBorder: rgba(255,255,255,0.14);
     }
 
+    /* Light theme overrides */
+    [data-theme="light"] {
+      --bg: #f6f7fb;
+      --panel: rgba(0,0,0,0.04);
+      --panel2: rgba(0,0,0,0.06);
+      --text: rgba(0,0,0,0.88);
+      --muted: rgba(0,0,0,0.60);
+      --border: rgba(0,0,0,0.12);
+      --shadow: 0 20px 70px rgba(0,0,0,0.12);
+
+      --accent: #2563eb;
+      --ok: #059669;
+      --warn: #d97706;
+      --bad: #e11d48;
+      --chip: rgba(0,0,0,0.06);
+      --chipBorder: rgba(0,0,0,0.10);
+    }
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -154,7 +171,8 @@
       border-radius: 999px;
       text-decoration: none;
     }
-  
+    [data-theme="light"] .metaRow a { background: rgba(255,255,255,0.7); }
+    .metaRow a:hover { background: var(--panel2); }
 
     .card {
       border: 1px solid var(--border);
@@ -190,7 +208,7 @@
       gap: 8px;
       background: rgba(0,0,0,0.10);
     }
-
+    [data-theme="light"] .pill { background: rgba(255,255,255,0.7); }
 
     .dot {
       width: 9px; height: 9px;
@@ -253,6 +271,17 @@
       background: rgba(0,0,0,0.08);
       padding: 12px;
     }
+    [data-theme="light"] .projItem { background: rgba(255,255,255,0.7); }
+    .projItem h4 { margin: 0 0 4px; font-size: 15px; }
+    .projItem p { margin: 0; color: var(--muted); font-size: 13px; }
+    .projLinks { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .projLinks a {
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 7px 10px;
+      border-radius: 12px;
+    }
 
     .footer {
       margin-top: 22px;
@@ -272,7 +301,7 @@
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.15);
     }
-    
+    [data-theme="light"] code.inline { background: rgba(0,0,0,0.06); }
 
   </style>
 </head>
@@ -285,6 +314,11 @@
         <div class="tagline">WGU BSIT (Summer 2027) · IT Student Worker · Texas</div>
       </div>
 
+      <div class="controls">
+        <button class="btn" id="themeBtn" type="button" aria-label="Toggle theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark</span>
+        </button>
 
         <a class="btn" href="https://github.com/takpunku-max" target="_blank" rel="noreferrer">
           GitHub ↗
@@ -316,10 +350,11 @@
           </div>
 
           <div class="kv" id="statusKV">
-            <div>Uptime</div><div id="status-uptime">—</div>
-            <div>Host</div><div id="status-host">—</div>
-            <div>UTC</div><div id="status-utc">—</div>
-            <div>Version</div><div id="status-version">—</div>
+            <div>Domain</div><div><code class="inline">aws.ubuntu-servervm.work</code></div>
+            <div>Uptime</div><div id="uptime">—</div>
+            <div>Host</div><div id="host">—</div>
+            <div>UTC</div><div id="utc">—</div>
+            <div>Version</div><div id="version">—</div>
           </div>
 
           <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -416,55 +451,73 @@
   </div>
 
   <script>
-    
-	  function formatUptime(seconds) {
-    const d = Math.floor(seconds / 86400);
-    seconds %= 86400;
-    const h = Math.floor(seconds / 3600);
-    seconds %= 3600;
-    const m = Math.floor(seconds / 60);
+    // --- Theme (dark by default, toggle + persistence) ---
+    (function initTheme() {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const initial = saved || (prefersDark ? "dark" : "light");
+      setTheme(initial);
 
-    if (d > 0) return `${d}d ${h}h`;
-    if (h > 0) return `${h}h ${m}m`;
-    return `${m}m`;
-  }
+      document.getElementById("themeBtn").addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        setTheme(next);
+        localStorage.setItem("theme", next);
+      });
 
-  async function loadStatus() {
-    const dot = document.getElementById("statusDot");
-    const text = document.getElementById("statusText");
+      function setTheme(mode) {
+        document.documentElement.setAttribute("data-theme", mode);
+        document.getElementById("themeIcon").textContent = mode === "dark" ? "🌙" : "☀️";
+        document.getElementById("themeText").textContent = mode === "dark" ? "Dark" : "Light";
+      }
+    })();
 
-    try {
-      const res = await fetch("/api/status");
-      if (!res.ok) throw new Error("Fetch failed");
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-      const data = await res.json();
+    // --- Status fetch from /api/status ---
+    async function loadStatus() {
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
 
-      // Populate fields
-      document.getElementById("status-uptime").textContent =
-        formatUptime(data.uptime_seconds);
+      const host = document.getElementById("host");
+      const utc = document.getElementById("utc");
+      const version = document.getElementById("version");
+      const uptime = document.getElementById("uptime");
 
-      document.getElementById("status-host").textContent = data.host;
-      document.getElementById("status-utc").textContent = data.utc;
-      document.getElementById("status-version").textContent = data.version ?? data.app_version ?? "—";
+      dot.className = "dot";
+      text.textContent = "Checking…";
 
-      // Status pill
-      dot.className = "dot ok";
-      text.textContent = "LIVE";
+      try {
+        const res = await fetch("/api/status", { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
 
-    } catch (err) {
-      console.error(err);
-      dot.className = "dot bad";
-      text.textContent = "ERROR";
-      document.getElementById("status-uptime").textContent = "Unavailable";
+        const data = await res.json();
+
+        // Basic assumptions: {status:"ok", host, utc, version}
+        const ok = (data.status || "").toLowerCase() === "ok";
+
+        dot.className = "dot " + (ok ? "ok" : "");
+        text.textContent = ok ? "LIVE" : "DEGRADED";
+
+        host.textContent = data.host || "—";
+        utc.textContent = data.utc || "—";
+        version.textContent = data.version || "—";
+
+        // If you later add uptime to your API, it will show up automatically.
+        uptime.textContent = data.uptime || "—";
+
+      } catch (e) {
+        dot.className = "dot bad";
+        text.textContent = "DOWN";
+        host.textContent = "—";
+        utc.textContent = "—";
+        version.textContent = "—";
+        uptime.textContent = "—";
+      }
     }
-  }
 
-  // Button wiring
-  document.getElementById("refreshBtn").addEventListener("click", loadStatus);
-
-  // Initial load
-  loadStatus();
-
+    document.getElementById("refreshBtn").addEventListener("click", loadStatus);
+    loadStatus();
   </script>
 </body>
 </html>
